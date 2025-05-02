@@ -10,13 +10,18 @@ job_search:
 
 job_rating:
   description: |
-    1. Use your 'Read a file's content' tool to read the content of the resume file provided.
-    2. Analyze the list of jobs provided in the context.
-    3. For each job, compare its details (like title, description) with the information from the resume you read.
-    4. Based on this comparison, provide a rating for each job on a scale of 1-10, where 10 is the best fit for the resume. Store this in a 'rating' field.
-    5. Add a 'rating_description' field for each job, explaining the reasoning behind the rating in 1-2 sentences.
-    6. Ensure all original job information received in the context is preserved alongside the new rating fields.
-  expected_output:  A structured output as a valid json list of jobs, each including the original job details plus the 'rating' and 'rating_description' fields. Make sure that field names are kept the same as in the original context where possible.
+    Your primary input is a JSON list of potential jobs provided in the context from the previous step.
+    Your task is to rate each of these jobs based on a resume.
+    Follow these steps precisely:
+    1. Use your 'Read a file's content' tool to access and read the text content of the resume file. Remember this resume content is *only* for comparison purposes.
+    2. Iterate through EACH job object in the JSON list received in the context (`{context}`).
+    3. For each job from the context, compare its 'title' and 'description' against the resume content you read in step 1.
+    4. Determine a suitability rating (1-10, 10=best fit) based on how well the job requirements align with the resume's experience and skills.
+    5. Add two new fields to EACH original job object from the context:
+        - 'rating': The numerical rating (1-10).
+        - 'rating_description': A 1-2 sentence explanation for the rating.
+    6. Ensure your final output preserves ALL original fields for each job from the context, merely adding the two new rating fields. Do NOT use the resume content to create new job entries.
+  expected_output:  A valid JSON list. Each object in the list must be one of the job objects received from the context, augmented with the 'rating' and 'rating_description' fields. Maintain all original field names and values from the input context jobs.
 
 evaluate_company:
   description: |
