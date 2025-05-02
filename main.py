@@ -30,13 +30,13 @@ class JobSearchCrew:
 
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
-        jobs_file_read_tool = FileReadTool(file_path="data/sample_jobs.json")
+        # jobs_file_read_tool = FileReadTool(file_path="data/sample_jobs.json") # No longer reading jobs from file
         search_tool = SerperDevTool(n_results=5)
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
         job_search_expert_agent = agent_factory.create_agent(
-            "job_search_expert", tools=[jobs_file_read_tool], llm=llm
+            "job_search_expert", tools=[search_tool], llm=llm # Use search tool to find jobs
         )
         job_rating_expert_agent = agent_factory.create_agent(
             "job_rating_expert", tools=[resume_file_read_tool], llm=llm

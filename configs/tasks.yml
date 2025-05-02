@@ -1,7 +1,7 @@
 job_search:
   description: |
-    find a list jobs that fulfill the following requirements: {query}
-  expected_output: A structured output as a valid json with the list of jobs found with all their information. Make sure that field names are kept the same.
+    Using your search tool, find job postings online that fulfill the following requirements: {query}
+  expected_output: A structured output as a valid json with the list of jobs found via web search, including relevant details like title, company, description, location, and URL if available.
 
 job_rating:
   description: |
