@@ -30,12 +30,15 @@ class JobSearchCrew:
 
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
-        search_tool = SerperDevTool(n_results=15) # Reduced from 50 to lower context usage
+        search_tool = SerperDevTool(n_results=50) # Increased back to 50 for broader initial search
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
         job_search_expert_agent = agent_factory.create_agent(
             "job_search_expert", tools=[search_tool], llm=llm # Use search tool to find jobs
+        )
+        job_filtering_expert_agent = agent_factory.create_agent(
+            "job_filtering_expert", tools=None, llm=llm # No tools needed, just context analysis
         )
         job_rating_expert_agent = agent_factory.create_agent(
             "job_rating_expert", tools=[resume_file_read_tool], llm=llm
@@ -55,6 +58,9 @@ class JobSearchCrew:
         job_search_task = tasks_factory.create_task(
             "job_search", job_search_expert_agent, query=self.query
         )
+        filter_jobs_task = tasks_factory.create_task(
+            "filter_jobs", job_filtering_expert_agent, query=self.query # Pass query for relevance check
+        )
         job_rating_task = tasks_factory.create_task(
             "job_rating", job_rating_expert_agent
         )
@@ -73,12 +79,14 @@ class JobSearchCrew:
         crew = Crew(
             agents=[
                 job_search_expert_agent,
+                job_filtering_expert_agent, # Added filtering agent
                 job_rating_expert_agent,
                 company_rating_expert_agent,
                 summarization_expert_agent,
             ],
             tasks=[
                 job_search_task,
+                filter_jobs_task, # Added filtering task
                 job_rating_task,
                 evaluate_company_task,
                 structure_results_task,

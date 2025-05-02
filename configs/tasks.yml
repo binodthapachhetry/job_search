@@ -8,6 +8,14 @@ job_search:
     4. Compile a list of these extracted job postings. Aim to find as many relevant job postings as possible from the provided search results.
   expected_output: A structured output as a valid json with the list of jobs found with all their information. Make sure that field names are kept the same.
 
+filter_jobs:
+  description: |
+    You are given a JSON list of potential job postings in the context from the previous step. The original user query was: {query}.
+    Your task is to filter this list down to the top 10-15 most relevant job postings based *only* on the job titles and descriptions provided in the list, compared against the original query.
+    Do not use any external tools. Simply analyze the text provided in the context.
+    Prioritize jobs whose titles and descriptions most closely match the keywords and intent of the original query.
+  expected_output: A valid JSON list containing *only* the selected top 10-15 most relevant job objects from the input context. Preserve the exact structure and fields of the selected job objects.
+
 job_rating:
   description: |
     Your primary input is a JSON list of potential jobs provided in the context from the previous step.
