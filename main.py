@@ -22,16 +22,15 @@ class JobSearchCrew:
     def run(self):
         # Define the LLM AI Agents will utilize
         llm = ChatOpenAI(
-            api_key=os.environ.get("OPENAI_API_KEY"),
-            deployment_name="gpt-4.1",
+            api_key=os.getenv("OPENAI_API_KEY"),
+            deployment_name="gpt-4.1-mini",
             streaming=True,
             temperature=0,
         )
 
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
-        # jobs_file_read_tool = FileReadTool(file_path="data/sample_jobs.json") # No longer reading jobs from file
-        search_tool = SerperDevTool(n_results=5)
+        search_tool = SerperDevTool(n_results=50)
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
