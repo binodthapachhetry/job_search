@@ -5,12 +5,13 @@ job_search:
 
 job_rating:
   description: |
-    Using your tools to find the resume file information.  
-    Provide an additional rating on the jobs you received in context according to the Resume information. 
-    The rating is between 1-10 where 10 is the best fit. Every job should have a rating. 
-    Additionally add a rating_description field that explains the reasoning behind the number of rating in 1 or 2 sentences.
-    Make sure that all information about the jobs is also maintained in the output.
-  expected_output:  A structured output as a valid json of the list of jobs found and their respective ratings. Make sure that field names are kept the same.
+    1. Use your 'Read a file's content' tool to read the content of the resume file provided.
+    2. Analyze the list of jobs provided in the context.
+    3. For each job, compare its details (like title, description) with the information from the resume you read.
+    4. Based on this comparison, provide a rating for each job on a scale of 1-10, where 10 is the best fit for the resume. Store this in a 'rating' field.
+    5. Add a 'rating_description' field for each job, explaining the reasoning behind the rating in 1-2 sentences.
+    6. Ensure all original job information received in the context is preserved alongside the new rating fields.
+  expected_output:  A structured output as a valid json list of jobs, each including the original job details plus the 'rating' and 'rating_description' fields. Make sure that field names are kept the same as in the original context where possible.
 
 evaluate_company:
   description: |
