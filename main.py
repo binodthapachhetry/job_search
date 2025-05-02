@@ -5,7 +5,7 @@ from textwrap import dedent
 from crewai import Crew, Process
 from crewai_tools import FileReadTool, SerperDevTool
 from dotenv import load_dotenv
-from langchain_openai import AzureChatOpenAI
+from langchain_openai import ChatOpenAI
 from pydantic import ValidationError
 
 from agents_factory import AgentsFactory
@@ -21,10 +21,9 @@ class JobSearchCrew:
 
     def run(self):
         # Define the LLM AI Agents will utilize
-        azure_llm = AzureChatOpenAI(
-            azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
-            api_key=os.environ.get("AZURE_OPENAI_KEY"),
-            deployment_name="gpt4",
+        llm = ChatOpenAI(
+            api_key=os.environ.get("OPENAI_API_KEY"),
+            deployment_name="gpt-4.1",
             streaming=True,
             temperature=0,
         )
@@ -37,16 +36,16 @@ class JobSearchCrew:
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
         job_search_expert_agent = agent_factory.create_agent(
-            "job_search_expert", tools=[jobs_file_read_tool], llm=azure_llm
+            "job_search_expert", tools=[jobs_file_read_tool], llm=llm
         )
         job_rating_expert_agent = agent_factory.create_agent(
-            "job_rating_expert", tools=[resume_file_read_tool], llm=azure_llm
+            "job_rating_expert", tools=[resume_file_read_tool], llm=llm
         )
         company_rating_expert_agent = agent_factory.create_agent(
-            "company_rating_expert", tools=[search_tool], llm=azure_llm
+            "company_rating_expert", tools=[search_tool], llm=llm
         )
         summarization_expert_agent = agent_factory.create_agent(
-            "summarization_expert", tools=None, llm=azure_llm
+            "summarization_expert", tools=None, llm=llm
         )
 
         # Response model schema
