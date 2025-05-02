@@ -30,7 +30,7 @@ class JobSearchCrew:
 
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
-        search_tool = SerperDevTool(n_results=50)
+        search_tool = SerperDevTool(n_results=15) # Reduced from 50 to lower context usage
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
