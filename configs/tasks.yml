@@ -1,52 +1,81 @@
 job_search:
   description: |
-    You have a search tool that returns a list of web search results based on the query: {query}.
-    You also have a powerful website scraping tool ('SpiderTool') that can read website content, handle JavaScript, and return cleaned data (often in Markdown format).
-    Your goal is to identify *actual job postings* from these results and extract key information by visiting the pages.
-    1. Use the search tool to find potential job posting URLs based on the query: {query}.
-    2. Examine the search results. Filter out links that are clearly not job postings (e.g., general search pages, articles, forums). Prioritize links from company career pages or reputable job boards.
-    3. For each promising URL identified in step 2, use the 'SpiderTool' by providing just the URL. You do not need to specify any CSS selectors; the tool will process the main content of the page.
-    4. **IMPORTANT:** If using the scraping tool for a specific URL results in an error (like a timeout, connection error, or access denied), *do not stop*. Simply skip that URL and proceed to the next one. Do not include failed URLs in your final output.
-    5. If scraping is successful, the tool will return the page content, likely cleaned up (e.g., in Markdown). Analyze this returned content to extract the following details: "Job Title, Salary (if specified), Company Name, Location, a concise Description (summarize the key responsibilities/requirements), and the direct URL to the job posting".
-           Also extract detailed "Responsibilities" and "Requirements" sections if available on the page. Summarize them if they are very long, but capture the key points.
-    6. If a detail isn't available on the page, omit it or mark it as 'Not Available'. Discard postings that appear expired or are no longer accepting applications based on the page content.
-    7. Compile a list of these extracted job postings. Aim to find as many relevant job postings as possible from the initial search results by scraping their pages.
-  expected_output: A structured output as a valid json with the list of *successfully scraped and active* jobs found with all their information extracted *from the actual job posting pages using SpiderTool*. Make sure that field names are kept the same (title, salary, company, location, description, responsibilities, requirements, url).
+    **Objective:** Find active job postings matching the query '{query}', scrape their details, and format them as JSON.
+    **Tools:** You have a 'DuckDuckGoSearchRun' tool and a 'SpiderTool' for scraping.
+    **Process:**
+    1.  **Search:** Use the 'DuckDuckGoSearchRun' tool with the exact query '{query}' to get a list of potential URLs.
+    2.  **Initial Filter:** Review the search results (URLs, titles, snippets). Discard URLs that are clearly *not* job postings (e.g., news articles, general company pages, forum links). Prioritize URLs from known job boards (LinkedIn, Indeed, Glassdoor, company career pages).
+    3.  **Scrape & Analyze (Per URL):** For each potentially valid job posting URL from step 2:
+        a.  Use the 'SpiderTool' with the URL. Provide *only* the URL to the tool.
+        b.  **Error Handling:** If the 'SpiderTool' returns an error for a URL, log the error briefly and *immediately skip* to the next URL. Do *not* include failed URLs in the output.
+        c.  **Content Analysis:** If scraping succeeds, carefully analyze the returned content (likely Markdown). Determine if the job posting is still active (look for expiry dates, "closed", "filled" indicators). If it appears inactive/expired, discard this URL.
+        d.  **Data Extraction:** If the job seems active, extract the following fields *strictly from the scraped content*:
+            - `title`: The job title.
+            - `company`: The hiring company's name.
+            - `location`: The job location.
+            - `description`: A concise summary (1-3 sentences) of the job's purpose or main function.
+            - `responsibilities`: Key responsibilities listed (summarize if very long).
+            - `requirements`: Key qualifications/skills required (summarize if very long).
+            - `salary`: Salary information *if explicitly stated*. If not present, use `null` or omit the field. Do *not* estimate.
+            - `url`: The original URL that was successfully scraped.
+        e.  **Missing Data:** If a field (other than salary) cannot be found in the scraped text, use `null` or omit the field. Do *not* invent data.
+    4.  **Compile Results:** Collect all successfully scraped and extracted job data objects into a JSON list.
+  expected_output: A valid JSON list where each object represents a successfully scraped, active job posting. Each object MUST contain the fields: `title`, `company`, `location`, `description`, `responsibilities`, `requirements`, `url`, and optionally `salary`. Field values must be derived *only* from the scraped page content. Ensure the output is a single, valid JSON list structure.
 
 filter_jobs:
   description: |
-    You are given a JSON list of potential job postings in the context from the previous step. The original user query was: {query}.
-    Your task is to filter this list down to the top 10-15 most relevant job postings based *only* on the job titles and descriptions provided in the list, compared against the original query.
-    Do not use any external tools. Simply analyze the text provided in the context.
-    Prioritize jobs whose titles and descriptions most closely match the keywords and intent of the original query.
-  expected_output: A valid JSON list containing *only* the selected top 10-15 most relevant job objects from the input context. Preserve the exact structure and fields of the selected job objects.
+    **Objective:** Filter the incoming JSON list of job postings to retain only the top 10-15 most relevant ones based on the original user query.
+    **Input:** A JSON list of job objects provided in the context (`{context}`). Each object contains fields like `title`, `description`, `responsibilities`, `requirements`, etc.
+    **Reference Query:** The original user query was: '{query}'.
+    **Constraint:** You MUST NOT use any external tools. Perform the filtering based *solely* on the text data within the provided job objects in the context.
+    **Process:**
+    1.  Analyze the `title`, `description`, `responsibilities`, and `requirements` fields of EACH job object in the input list.
+    2.  Compare the content of these fields against the keywords, concepts, and intent expressed in the **Reference Query**.
+    3.  Assign a relevance score (internal thought process, not needed in output) to each job based on the closeness of the match.
+    4.  Select the top 10 to 15 job objects with the highest relevance scores. If fewer than 10 jobs are in the input, return all of them.
+  expected_output: A valid JSON list containing *only* the selected top 10-15 most relevant job objects from the input context. The structure and all fields of the selected job objects MUST be preserved exactly as they were in the input list. The output must be a single, valid JSON list.
 
 job_rating:
   description: |
-    Your primary input is a JSON list of potential jobs provided in the context from the previous step.
-    Your task is to rate each of these jobs based on a resume.
-    Follow these steps precisely:
-    1. Use your 'Read a file's content' tool to access and read the text content of the resume file.
-    2. Iterate through EACH job object in the JSON list received in the context (`{context}`).
-    3. For each job from the context, compare its 'title', 'description', 'responsibilities', and 'requirements' against the resume content you read in step 1.
-    4. Determine a suitability rating (1-10, 10=best fit) based on how well the job requirements align with the resume's experience and skills.
-    5. Add two new fields to EACH original job object from the context:
-        - 'rating': The numerical rating (1-10).
-        - 'rating_description': A 1-2 sentence explanation for the rating.
-    6. Ensure your final output preserves ALL original fields for each job from the context, merely adding the two new rating fields. Do NOT use the resume content to create new job entries.
-  expected_output:  A valid JSON list. Each object in the list must be one of the job objects received from the context, augmented with the 'rating' and 'rating_description' fields. Maintain all original field names and values from the input context jobs.
+    **Objective:** Rate each job in the provided list based on its suitability against a given resume.
+    **Input:** A JSON list of job objects provided in the context (`{context}`).
+    **Tool:** You have a 'FileReadTool' to read the resume content.
+    **Process:**
+    1.  **Read Resume:** Use the 'FileReadTool' to read the content of the resume file specified in the tool's configuration. Store this content for comparison.
+    2.  **Iterate & Rate:** For EACH job object in the input JSON list:
+        a.  **Compare:** Analyze the job's `title`, `description`, `responsibilities`, and `requirements` fields. Compare the skills, experience, and keywords mentioned in these fields against the content of the resume read in step 1.
+        b.  **Determine Rating:** Assign a numerical suitability `rating` from 1 (poor fit) to 10 (excellent fit). The rating should reflect how well the candidate's profile (from the resume) matches the job's stated needs.
+        c.  **Justify Rating:** Write a concise `rating_description` (1-2 sentences) explaining the key reasons for the assigned rating (e.g., "Strong match for Python and cloud skills, but lacks required 5+ years management experience.").
+        d.  **Augment Job Object:** Add the calculated `rating` (integer) and `rating_description` (string) fields to the *original* job object.
+    3.  **Compile Results:** Collect all the augmented job objects into a new JSON list.
+    **Constraint:** Ensure that ALL original fields and values from the input job objects are preserved in the output. Only the `rating` and `rating_description` fields should be added. Do not modify other fields.
+  expected_output: A valid JSON list containing ALL job objects from the input context. Each job object MUST be augmented with two new fields: `rating` (integer 1-10) and `rating_description` (string). All other original fields and values must be unchanged.
 
 evaluate_company:
   description: |
-    Using your tools find information about the company of jobs.
-    Information can include company culture reviews, company financial reports, and stock performance. 
-    provide an additional rating for the company in a field called company_rating.
-    The rating is between 1-10 where 10 is the best rating. Every job should have a rating.  
-    Additionally add a company_rating_description field that explains the reasoning behind the number of rating in 1 or 2 sentences.
-    Make sure that all information about the jobs is also maintained in the output.
-  expected_output:  A structured output as a valid json of the list of jobs found and their respective ratings, make sure to structure all information according this model {output_schema}
+    **Objective:** Evaluate the hiring company for each job in the list and add a company rating.
+    **Input:** A JSON list of job objects provided in the context (`{context}`), each containing a `company` field.
+    **Tool:** You have a 'DuckDuckGoSearchRun' tool.
+    **Process:**
+    1.  **Iterate Through Jobs:** For EACH job object in the input JSON list:
+        a.  **Identify Company:** Get the company name from the job's `company` field.
+        b.  **Research Company:** Use the 'DuckDuckGoSearchRun' tool to search for information about this specific company. Focus queries on aspects relevant to job suitability, such as: recent news about the company, employee reviews (e.g., search "Glassdoor reviews [Company Name]"), general company reputation, and recent major developments (layoffs, growth, funding).
+        c.  **Synthesize Findings:** Briefly summarize the key findings from your research regarding the company's stability, culture (based on reviews), and overall reputation.
+        d.  **Determine Rating:** Based on your findings, assign a `company_rating` from 1 (very poor outlook/reviews) to 10 (excellent outlook/reviews). Consider factors like positive employee sentiment, company growth/stability, and absence of major negative news.
+        e.  **Justify Rating:** Write a concise `company_rating_description` (1-2 sentences) explaining the basis for the rating (e.g., "High rating due to strong growth reported in Q1 and positive Glassdoor reviews mentioning work-life balance.").
+        f.  **Augment Job Object:** Add the calculated `company_rating` (integer) and `company_rating_description` (string) to the *original* job object.
+    2.  **Compile Results:** Collect all the augmented job objects into a new JSON list.
+    **Constraint:** Ensure that ALL original fields and values from the input job objects (including the job `rating` and `rating_description` added in the previous step) are preserved. Only the `company_rating` and `company_rating_description` fields should be added in this step.
+  expected_output: A valid JSON list containing ALL job objects from the input context. Each job object MUST be augmented with two new fields: `company_rating` (integer 1-10) and `company_rating_description` (string). All other original fields and values must be unchanged. The final structure should align with the job objects within the provided {output_schema}.
 
 structure_results:
   description: |
-    Use all the context to structure the output as needed for the final reporting.
-  expected_output: A structured output as a valid json of the list of jobs found and their respective ratings. Make sure that the final output you provide is a valid json with schema {output_schema}
+    **Objective:** Ensure the final list of job objects conforms precisely to the required output JSON schema.
+    **Input:** The final JSON list of job objects provided in the context (`{context}`) after all previous processing steps (search, filter, job rating, company rating).
+    **Constraint:** You MUST NOT use any tools. Do not add, remove, or substantively change any data fields or values unless absolutely necessary for schema validation. This task is primarily for final formatting and validation.
+    **Process:**
+    1.  Receive the JSON list of fully processed job objects from the context.
+    2.  Verify that the overall structure is a JSON object containing a key (e.g., "jobs") whose value is the list of job objects.
+    3.  Verify that each job object in the list contains all the required fields as defined in the target schema {output_schema} and that the data types are correct (e.g., ratings are integers).
+    4.  If the structure is already correct, pass it through unchanged. If minor adjustments are needed for schema compliance (e.g., wrapping the list in a root object), perform them.
+  expected_output: A single, valid JSON object exactly matching the structure defined by {output_schema}. This typically involves a root key (like "jobs") containing the list of final job objects.
