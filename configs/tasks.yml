@@ -4,7 +4,7 @@ job_search:
     Your goal is to identify *actual job postings* from these results and extract key information.
     1. Examine ALL the search results provided by the tool.
     2. Filter the results: Select only those links that appear to be specific job postings on company career pages or reputable job boards (like LinkedIn jobs, Indeed postings, Glassdoor jobs, etc.). Discard links to general search result pages, articles, PDFs, forums, or unrelated websites.
-    3. For each identified job posting link, try to extract these details from the search result snippet or title - "Job Title, Company Name, Location, and the direct URL to the job posting". Use the snippet for a brief Description. If a detail isn't available in the search result, omit it or mark it as 'Not Available'.
+    3. For each identified job posting link, try to extract these details from the search result snippet or title - "Job Title, Salary, Company Name, Location, and the direct URL to the job posting". Use the snippet for a brief Description. If a detail isn't available in the search result, omit it or mark it as 'Not Available'.
     4. Compile a list of these extracted job postings. Aim to find as many relevant job postings as possible from the provided search results.
   expected_output: A structured output as a valid json with the list of jobs found with all their information. Make sure that field names are kept the same.
 
@@ -21,7 +21,7 @@ job_rating:
     Your primary input is a JSON list of potential jobs provided in the context from the previous step.
     Your task is to rate each of these jobs based on a resume.
     Follow these steps precisely:
-    1. Use your 'Read a file's content' tool to access and read the text content of the resume file. Remember this resume content is *only* for comparison purposes.
+    1. Use your 'Read a file's content' tool to access and read the text content of the resume file.
     2. Iterate through EACH job object in the JSON list received in the context (`{context}`).
     3. For each job from the context, compare its 'title' and 'description' against the resume content you read in step 1.
     4. Determine a suitability rating (1-10, 10=best fit) based on how well the job requirements align with the resume's experience and skills.
