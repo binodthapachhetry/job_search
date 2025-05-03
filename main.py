@@ -3,6 +3,7 @@ import os
 from textwrap import dedent
 
 from crewai import Crew, Process, LLM
+# Note: Ensure SpiderTool dependencies are installed if needed, often requires firecrawl-py or similar
 from crewai_tools import FileReadTool, SerperDevTool, ScrapeWebsiteTool, SpiderTool
 from dotenv import load_dotenv # Used to load environment variables
 from pydantic import ValidationError
@@ -32,15 +33,16 @@ class JobSearchCrew:
         search_tool = SerperDevTool(n_results=50) # Keep n_results reasonable for initial search
         # Configure scrape tool with a common User-Agent to mimic a browser and potentially avoid blocks.
         # Pass arguments to the underlying requests library via requests_kwargs.
-        scrape_tool = ScrapeWebsiteTool(
-            requests_kwargs={'headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}}
-        )
-        # scrape_tool = SpiderTool()
+        # scrape_tool = ScrapeWebsiteTool(
+        #     requests_kwargs={'headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}}
+        # )
+        # Instantiate SpiderTool - Ensure FIRECRAWL_API_KEY is set in your .env if required by SpiderTool/Firecrawl
+        spider_tool = SpiderTool()
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
         job_search_expert_agent = agent_factory.create_agent(
-            "job_search_expert", tools=[search_tool, scrape_tool], llm=llm # Use search and scrape tools
+            "job_search_expert", tools=[search_tool, spider_tool], llm=llm # Use search and spider (scraping) tools
         )
         job_filtering_expert_agent = agent_factory.create_agent(
             "job_filtering_expert", tools=None, llm=llm # No tools needed, just context analysis
