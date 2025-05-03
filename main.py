@@ -3,7 +3,7 @@ import os
 from textwrap import dedent
 
 from crewai import Crew, Process, LLM
-from crewai_tools import FileReadTool, SerperDevTool, ScrapeWebsiteTool
+from crewai_tools import FileReadTool, SerperDevTool, ScrapeWebsiteTool, SpiderTool
 from dotenv import load_dotenv # Used to load environment variables
 from pydantic import ValidationError
 
@@ -35,6 +35,7 @@ class JobSearchCrew:
         scrape_tool = ScrapeWebsiteTool(
             requests_kwargs={'headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}}
         )
+        # scrape_tool = SpiderTool()
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
