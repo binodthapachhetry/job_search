@@ -23,7 +23,7 @@ class JobSearchCrew:
         # Define the LLM AI Agents will utilize
         # Switched to Google Gemini
         llm = ChatGoogleGenerativeAI(
-                model="gemini-pro", # Or "gemini-1.5-pro-latest" if available and needed
+                model="gemini-1.5-pro", # Or "gemini-1.5-pro-latest" if available and needed
                 verbose=True,
                 temperature=0,
                 google_api_key=os.getenv("GEMINI_API_KEY"),
