@@ -30,7 +30,7 @@ class JobSearchCrew:
 
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
-        search_tool = SerperDevTool(n_results=50) # Increased back to 50 for broader initial search
+        search_tool = SerperDevTool(n_results=100) # Increased back to 50 for broader initial search
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
@@ -79,16 +79,16 @@ class JobSearchCrew:
         crew = Crew(
             agents=[
                 job_search_expert_agent,
-                job_filtering_expert_agent, # Added filtering agent
+                # job_filtering_expert_agent, # Added filtering agent
                 job_rating_expert_agent,
-                company_rating_expert_agent,
+                # company_rating_expert_agent,
                 summarization_expert_agent,
             ],
             tasks=[
                 job_search_task,
-                filter_jobs_task, # Added filtering task
+                # filter_jobs_task, # Added filtering task
                 job_rating_task,
-                evaluate_company_task,
+                # evaluate_company_task,
                 structure_results_task,
             ],
             verbose=1,

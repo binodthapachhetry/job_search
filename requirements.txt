@@ -1,5 +1,5 @@
-crewai
-langchain-openai==0.3.15
-python-dotenv
-PyYAML
-pydantic
+crewai[tools]
+# langchain-openai
+# python-dotenv
+# PyYAML
+# pydantic
