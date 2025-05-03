@@ -9,6 +9,8 @@ class Job(BaseModel):
     title: Optional[str] 
     company: Optional[str]
     description: Optional[str]
+    responsibilities: Optional[str] # Added field
+    requirements: Optional[str] # Added field
     jobProvider: Optional[str]
     url: Optional[str]
     rating: Optional[int] 

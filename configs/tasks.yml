@@ -8,9 +8,10 @@ job_search:
     3. For each promising URL identified in step 2, use the 'SpiderTool' by providing just the URL. You do not need to specify any CSS selectors; the tool will process the main content of the page.
     4. **IMPORTANT:** If using the scraping tool for a specific URL results in an error (like a timeout, connection error, or access denied), *do not stop*. Simply skip that URL and proceed to the next one. Do not include failed URLs in your final output.
     5. If scraping is successful, the tool will return the page content, likely cleaned up (e.g., in Markdown). Analyze this returned content to extract the following details: "Job Title, Salary (if specified), Company Name, Location, a concise Description (summarize the key responsibilities/requirements), and the direct URL to the job posting".
+           Also extract detailed "Responsibilities" and "Requirements" sections if available on the page. Summarize them if they are very long, but capture the key points.
     6. If a detail isn't available on the page, omit it or mark it as 'Not Available'. Discard postings that appear expired or are no longer accepting applications based on the page content.
     7. Compile a list of these extracted job postings. Aim to find as many relevant job postings as possible from the initial search results by scraping their pages.
-  expected_output: A structured output as a valid json with the list of *successfully scraped and active* jobs found with all their information extracted *from the actual job posting pages using SpiderTool*. Make sure that field names are kept the same (title, salary, company, location, description, url).
+  expected_output: A structured output as a valid json with the list of *successfully scraped and active* jobs found with all their information extracted *from the actual job posting pages using SpiderTool*. Make sure that field names are kept the same (title, salary, company, location, description, responsibilities, requirements, url).
 
 filter_jobs:
   description: |
@@ -27,7 +28,7 @@ job_rating:
     Follow these steps precisely:
     1. Use your 'Read a file's content' tool to access and read the text content of the resume file.
     2. Iterate through EACH job object in the JSON list received in the context (`{context}`).
-    3. For each job from the context, compare its 'title' and 'description' against the resume content you read in step 1.
+    3. For each job from the context, compare its 'title', 'description', 'responsibilities', and 'requirements' against the resume content you read in step 1.
     4. Determine a suitability rating (1-10, 10=best fit) based on how well the job requirements align with the resume's experience and skills.
     5. Add two new fields to EACH original job object from the context:
         - 'rating': The numerical rating (1-10).
