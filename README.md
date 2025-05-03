@@ -1,9 +1,5 @@
 # Project Overview
 
-## Description
-
-Project full description available at:  [Job Search 2.0 Turbo](https://medium.com/towards-data-science/job-search-2-0-turbo-579e1bdb5177)
-
 ## Project Structure Overview
 
 ![Project Overview](./files/overview.png)
@@ -32,9 +28,7 @@ To set up this project locally, follow these steps:
 3. Set up the environment variables within the .env file:
    ```bash
    SERPER_API_KEY=<ENTER KEY HERE>
-   OPENAI_API_VERSION =<ENTER KEY HERE>
-   AZURE_OPENAI_KEY=<ENTER KEY HERE>
-   AZURE_OPENAI_ENDPOINT =<ENTER KEY HERE>
+   GEMINI_API_KEY=<ENTER KEY HERE>
 
 4. Run the application
    ```bash
