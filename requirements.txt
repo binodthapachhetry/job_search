@@ -1,6 +1,6 @@
 crewai[tools]
 langchain-google-genai # Added for Google Gemini LLM support
-# langchain-openai
-# python-dotenv
-# PyYAML
-# pydantic
+# langchain-openai # Keep commented out unless needed
+python-dotenv # For loading .env files
+PyYAML # For loading YAML config files
+pydantic # For data models

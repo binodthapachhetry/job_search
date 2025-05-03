@@ -24,7 +24,7 @@ class JobSearchCrew:
         # Switched to Google Gemini
         llm = ChatGoogleGenerativeAI(
                 model="gemini-pro", # Using standard gemini-pro identifier
-                verbose=True,
+                # verbose=True, # Removed for testing
                 temperature=0,
                 google_api_key=os.getenv("GEMINI_API_KEY"),
                 convert_system_message_to_human=True # Often needed for Gemini compatibility
