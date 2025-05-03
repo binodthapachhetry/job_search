@@ -3,7 +3,7 @@ job_search:
     You have a search tool that returns a list of web search results based on the query: {query}.
     Your goal is to identify *actual job postings* from these results and extract key information.
     1. Examine ALL the search results provided by the tool.
-    2. Filter the results: Select only those links that appear to be specific job postings on company career pages or reputable job boards (like LinkedIn jobs, Indeed postings, Glassdoor jobs, etc.). Discard links to general search result pages, articles, PDFs, forums, or unrelated websites.
+    2. Filter the results: Select only those links that appear to be specific job postings on company career pages or reputable job boards (like LinkedIn jobs, Indeed postings, Glassdoor jobs, etc.). Discard links to job postings that have expired or are no longer accepting applications, general search result pages, articles, PDFs, forums, or unrelated websites.
     3. For each identified job posting link, try to extract these details from the search result snippet or title - "Job Title, Salary, Company Name, Location, and the direct URL to the job posting". Use the snippet for a brief Description. If a detail isn't available in the search result, omit it or mark it as 'Not Available'.
     4. Compile a list of these extracted job postings. Aim to find as many relevant job postings as possible from the provided search results.
   expected_output: A structured output as a valid json with the list of jobs found with all their information. Make sure that field names are kept the same.

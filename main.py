@@ -5,7 +5,6 @@ from textwrap import dedent
 from crewai import Crew, Process, LLM
 from crewai_tools import FileReadTool, SerperDevTool
 from dotenv import load_dotenv # Used to load environment variables
-from langchain_google_genai import ChatGoogleGenerativeAI # Changed from langchain_openai
 from pydantic import ValidationError
 
 from agents_factory import AgentsFactory
@@ -23,14 +22,14 @@ class JobSearchCrew:
         # Define the LLM AI Agents will utilize
         llm = LLM(
             model="gemini/gemini-2.0-flash-exp",
-            temperature=0.7,
+            temperature=0,
             gemini_api_key=os.getenv("GEMINI_API_KEY"),
             verbose=True
             )
 
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
-        search_tool = SerperDevTool(n_results=200) # Increased back to 50 for broader initial search
+        search_tool = SerperDevTool(n_results=500) # Increased back to 50 for broader initial search
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
