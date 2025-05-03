@@ -5,10 +5,11 @@ job_search:
     1. Use the search tool to find potential job posting URLs based on the query: {query}.
     2. Examine the search results. Filter out links that are clearly not job postings (e.g., general search pages, articles, forums). Prioritize links from company career pages or reputable job boards.
     3. For each promising URL identified in step 2, use the website scraping tool to visit the page.
-    4. From the *content of the actual web page*, extract the following details: "Job Title, Salary (if specified), Company Name, Location, a concise Description (summarize the key responsibilities/requirements), and the direct URL to the job posting".
-    5. If a detail isn't available on the page, omit it or mark it as 'Not Available'. Discard postings that appear expired or are no longer accepting applications based on the page content.
-    6. Compile a list of these extracted job postings. Aim to find as many relevant job postings as possible from the initial search results by scraping their pages.
-  expected_output: A structured output as a valid json with the list of jobs found with all their information extracted *from the actual job posting pages*. Make sure that field names are kept the same (title, salary, company, location, description, url).
+    4. **IMPORTANT:** If using the scraping tool for a specific URL results in an error (like a timeout, connection error, or access denied), *do not stop*. Simply skip that URL and proceed to the next one. Do not include failed URLs in your final output.
+    5. If scraping is successful, from the *content of the actual web page*, extract the following details: "Job Title, Salary (if specified), Company Name, Location, a concise Description (summarize the key responsibilities/requirements), and the direct URL to the job posting".
+    6. If a detail isn't available on the page, omit it or mark it as 'Not Available'. Discard postings that appear expired or are no longer accepting applications based on the page content.
+    7. Compile a list of these extracted job postings. Aim to find as many relevant job postings as possible from the initial search results by scraping their pages.
+  expected_output: A structured output as a valid json with the list of *successfully scraped and active* jobs found with all their information extracted *from the actual job posting pages*. Make sure that field names are kept the same (title, salary, company, location, description, url).
 
 filter_jobs:
   description: |

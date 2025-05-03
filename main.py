@@ -30,7 +30,11 @@ class JobSearchCrew:
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
         search_tool = SerperDevTool(n_results=50) # Keep n_results reasonable for initial search
-        scrape_tool = ScrapeWebsiteTool()
+        # Configure scrape tool with a common User-Agent to mimic a browser and potentially avoid blocks.
+        # Pass arguments to the underlying requests library via requests_kwargs.
+        scrape_tool = ScrapeWebsiteTool(
+            requests_kwargs={'headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}}
+        )
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
