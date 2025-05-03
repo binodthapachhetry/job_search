@@ -3,7 +3,7 @@ import os
 from textwrap import dedent
 
 from crewai import Crew, Process, LLM
-from crewai_tools import FileReadTool, SerperDevTool
+from crewai_tools import FileReadTool, SerperDevTool, ScrapeWebsiteTool
 from dotenv import load_dotenv # Used to load environment variables
 from pydantic import ValidationError
 
@@ -29,12 +29,13 @@ class JobSearchCrew:
 
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
-        search_tool = SerperDevTool(n_results=500) # Increased back to 50 for broader initial search
+        search_tool = SerperDevTool(n_results=50) # Keep n_results reasonable for initial search
+        scrape_tool = ScrapeWebsiteTool()
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
         job_search_expert_agent = agent_factory.create_agent(
-            "job_search_expert", tools=[search_tool], llm=llm # Use search tool to find jobs
+            "job_search_expert", tools=[search_tool, scrape_tool], llm=llm # Use search and scrape tools
         )
         job_filtering_expert_agent = agent_factory.create_agent(
             "job_filtering_expert", tools=None, llm=llm # No tools needed, just context analysis
