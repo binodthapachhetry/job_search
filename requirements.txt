@@ -1,5 +1,5 @@
 crewai[tools]
-+langchain-google-genai # Added for Google Gemini LLM support
+langchain-google-genai # Added for Google Gemini LLM support
 # langchain-openai
 # python-dotenv
 # PyYAML
