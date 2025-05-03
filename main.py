@@ -3,8 +3,8 @@ import os
 from textwrap import dedent
 
 from crewai import Crew, Process, LLM
-# Note: Ensure SpiderTool dependencies are installed if needed, often requires firecrawl-py or similar
-from crewai_tools import FileReadTool, SerperDevTool, ScrapeWebsiteTool, SpiderTool, SeleniumScrapingTool
+# Note: SpiderTool uses Firecrawl - ensure FIRECRAWL_API_KEY is in .env and firecrawl-py is installed (likely via crewai[tools])
+from crewai_tools import FileReadTool, SerperDevTool, SpiderTool # Removed ScrapeWebsiteTool, SeleniumScrapingTool
 from dotenv import load_dotenv # Used to load environment variables
 from pydantic import ValidationError
 
@@ -31,15 +31,12 @@ class JobSearchCrew:
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
         search_tool = SerperDevTool(n_results=50) # Keep n_results reasonable for initial search
-        # Configure scrape tool with a common User-Agent to mimic a browser and potentially avoid blocks.
-        # Pass arguments to the underlying requests library via requests_kwargs.
-        # scrape_tool = ScrapeWebsiteTool(
-        #     requests_kwargs={'headers': {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}}
-        # )
-        # Instantiate SpiderTool - Ensure FIRECRAWL_API_KEY is set in your .env if required by SpiderTool/Firecrawl
-        scrape_tool = SeleniumScrapingTool(
-            css_element='.main-content',
-            wait_time=5)
+
+        # Instantiate SpiderTool - uses Firecrawl service. Requires FIRECRAWL_API_KEY in .env
+        # It handles JS rendering and returns cleaner content (often Markdown).
+        scrape_tool = SpiderTool(
+            # Default mode is 'scrape', which is suitable here. No CSS selector needed.
+        )
 
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
