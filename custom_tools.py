@@ -3,7 +3,7 @@ import ast # For safely evaluating string representations of Python literals
 from typing import List, Dict, Any, Type, Union, Optional
 from urllib.parse import urlparse
 
-from crewai_tools import BaseTool
+from crewai.tools import BaseTool
 from pydantic.v1 import BaseModel, Field # Use pydantic.v1 for BaseTool compatibility
 
 # Define known patterns for search result pages (add more as needed)
