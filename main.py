@@ -2,12 +2,15 @@ import json
 import os
 from textwrap import dedent
 
+import os
+from textwrap import dedent
+
 from crewai import Crew, Process, LLM
-# Note: SpiderTool uses Firecrawl - ensure FIRECRAWL_API_KEY is in .env and firecrawl-py is installed (likely via crewai[tools])
-from crewai_tools import FileReadTool, SerperDevTool, SpiderTool # Removed ScrapeWebsiteTool, SeleniumScrapingTool
+from crewai_tools import FileReadTool, SerperDevTool, SpiderTool
 from dotenv import load_dotenv # Used to load environment variables
 from pydantic import ValidationError
 
+from custom_tools import SearchAndFilterTool # Import the new custom tool
 from agents_factory import AgentsFactory
 from models.models import JobResults
 from tasks_factory import TasksFactory
@@ -30,7 +33,10 @@ class JobSearchCrew:
 
         # Intialize all tools needed
         resume_file_read_tool = FileReadTool(file_path="data/sample_resume.txt")
-        search_tool = SerperDevTool(n_results=50) # Keep n_results reasonable for initial search
+        # Instantiate the base search tool
+        base_search_tool = SerperDevTool(n_results=50)
+        # Instantiate the custom tool, wrapping the base search tool
+        search_and_filter_tool = SearchAndFilterTool(search_tool=base_search_tool)
 
         # Instantiate SpiderTool - uses Firecrawl service. Requires FIRECRAWL_API_KEY in .env
         # It handles JS rendering and returns cleaner content (often Markdown).
@@ -41,7 +47,7 @@ class JobSearchCrew:
         # Create the Agents
         agent_factory = AgentsFactory("configs/agents.yml")
         job_search_expert_agent = agent_factory.create_agent(
-            "job_search_expert", tools=[search_tool, scrape_tool], llm=llm # Use search and spider (scraping) tools
+            "job_search_expert", tools=[search_and_filter_tool, scrape_tool], llm=llm # Use FILTERED search and spider tools
         )
         # job_filtering_expert_agent = agent_factory.create_agent(
         #     "job_filtering_expert", tools=None, llm=llm # No tools needed, just context analysis
