@@ -23,6 +23,9 @@ class TasksFactory:
 
         description = task_config["description"]
         if "{query}" in description and query is not None:
+            print("DESCRIPTION:" + description)
+            print("QUERY:"+query)
+            
             description = description.format(query=query)
 
         expected_output = task_config["expected_output"]
