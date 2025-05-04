@@ -64,14 +64,15 @@ class SearchAndFilterTool(BaseTool):
              print(f"Error during search tool execution: {e}")
              return f"Error during search tool execution: {e}"
 
+        # Try filtering the results
+        try:
+            filtered_results = []
+            for result in raw_results:
+                link = result.get('link')
+                if not link:
+                    continue
 
-        filtered_results = []
-        for result in raw_results:
-            link = result.get('link')
-            if not link:
-                continue
-
-            # 1. Exclude PDFs
+                # 1. Exclude PDFs
                 parsed_url = urlparse(link) # type: ignore # urlparse can take Optional[str]
                 if parsed_url.path and parsed_url.path.lower().endswith(".pdf"):
                     print(f"Filtering out PDF: {link}")
@@ -93,7 +94,7 @@ class SearchAndFilterTool(BaseTool):
             # Return the actual list of dictionaries
             return filtered_results
 
-        except Exception as e:
+        except Exception as e: # Catch errors during the filtering process
             print(f"Error during filtering in SearchAndFilterTool: {e}")
             # Return an error string if filtering fails
             return f"Error during filtering: {e}"
