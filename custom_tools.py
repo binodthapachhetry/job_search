@@ -68,10 +68,10 @@ class SearchAndFilterTool(BaseTool):
         filtered_results = []
         for result in raw_results:
             link = result.get('link')
-                if not link:
-                    continue
+            if not link:
+                continue
 
-                # 1. Exclude PDFs
+            # 1. Exclude PDFs
                 parsed_url = urlparse(link) # type: ignore # urlparse can take Optional[str]
                 if parsed_url.path and parsed_url.path.lower().endswith(".pdf"):
                     print(f"Filtering out PDF: {link}")
