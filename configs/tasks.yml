@@ -1,13 +1,14 @@
 job_search:
   description: |
     **Objective:** Use a specialized search tool to get pre-filtered job posting URLs matching '{query}', then scrape the valid ones for details and format as JSON.
-    **Tools:** You have a 'Filtered Job Search' tool (which internally searches and filters out PDFs/search pages, returning a list of potential job URLs) and a 'SpiderTool' for scraping.
+    **Tools:** You have a 'Filtered Job Search' tool (which internally searches and filters out PDFs/search pages) and a 'SpiderTool' for scraping.
     **Process:**
-    1.  **Filtered Search:** Use the 'Filtered Job Search' tool with the exact query '{query}'. This tool will return a string representation of a list of dictionaries, each containing a 'link' key with a URL that is likely a direct job posting (e.g., "[{{'link': 'url1'}}, {{'link': 'url2'}}]"). You need to parse this string to get the list of URLs.
-    2.  **Scrape & Analyze (Per URL):** For each URL extracted from the 'Filtered Job Search' tool's output:
-        a.  Use the 'SpiderTool' with the extracted URL. Provide *only* the URL to the tool.
-        b.  **Error Handling:** If the 'SpiderTool' returns an error for a URL, log the error briefly and *immediately skip* to the next URL. Do *not* include failed URLs in the output.
-        c.  **Content Analysis:** If scraping succeeds, carefully analyze the returned content (likely Markdown). Determine if the job posting is still active (look for expiry dates, "closed", "filled" indicators). If it appears inactive/expired, discard this URL.
+    1.  **Filtered Search:** Use the 'Filtered Job Search' tool with the exact query '{query}'. This tool will return a Python list of dictionaries. Each dictionary represents a potential job and contains at least a 'link' key with the URL, and possibly 'title' and 'snippet' keys if the underlying search provided them.
+    2.  **Scrape & Analyze (Per URL):** For each dictionary (representing a job result) in the list received from the 'Filtered Job Search' tool:
+        a.  Extract the URL from the 'link' key of the dictionary.
+        b.  Use the 'SpiderTool' with the extracted URL. Provide *only* the URL to the tool.
+        c.  **Error Handling:** If the 'SpiderTool' returns an error for a URL, log the error briefly and *immediately skip* to the next URL. Do *not* include failed URLs in the output.
+        d.  **Content Analysis:** If scraping succeeds, carefully analyze the returned content (likely Markdown). Determine if the job posting is still active (look for expiry dates, "closed", "filled" indicators). If it appears inactive/expired, discard this URL.
         d.  **Data Extraction:** If the job seems active, extract the following fields *strictly from the scraped content*:
             - `title`: The job title.
             - `company`: The hiring company's name.
@@ -17,7 +18,7 @@ job_search:
             - `requirements`: Key qualifications/skills required (summarize if very long).
             - `salary`: Salary information *if explicitly stated*. If not present, use `null` or omit the field. Do *not* estimate.
             - `url`: The original URL that was successfully scraped.
-        e.  **Missing Data:** If a field (other than salary) cannot be found in the scraped text, use `null` or omit the field. Do *not* invent data.
+        f.  **Missing Data:** If a field (other than salary) cannot be found in the scraped text, use `null` or omit the field. Do *not* invent data.
     3.  **Compile Results:** Collect all successfully scraped and extracted job data objects into a JSON list.
   expected_output: A valid JSON list where each object represents a successfully scraped, active job posting obtained from the pre-filtered URLs. Each object MUST contain the fields `title`, `company`, `location`, `description`, `responsibilities`, `requirements`, `url`, and optionally `salary`. Field values must be derived *only* from the scraped page content. Ensure the output is a single, valid JSON list structure.
 
