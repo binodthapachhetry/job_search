@@ -86,16 +86,14 @@ class SearchAndFilterTool(BaseTool):
                 # if not any(re.search(pattern, link) for pattern in JOB_PAGE_PATTERNS):
                 #     continue # Be stricter: only allow known good patterns
 
-                # If it passes filters, add the original structure (just the link in this case)
+                # If it passes filters, add the original result dictionary
                 filtered_results.append(result)
 
-            print(f"SearchAndFilterTool: Returning {len(filtered_results)} filtered results.")
-            # Return the filtered list of dicts (currently just {'link': url})
-            # The agent using this will get this list.
-            # We might need to adjust the expected output format later if more context is needed.
-            # Returning a string representation might be safer for CrewAI processing.
-            return str(filtered_results) # Return as string for compatibility
+            print(f"SearchAndFilterTool: Returning {len(filtered_results)} filtered results as a list.")
+            # Return the actual list of dictionaries
+            return filtered_results
 
         except Exception as e:
-            print(f"Error in SearchAndFilterTool: {e}")
-            return f"Error during search and filtering: {e}"
+            print(f"Error during filtering in SearchAndFilterTool: {e}")
+            # Return an error string if filtering fails
+            return f"Error during filtering: {e}"
