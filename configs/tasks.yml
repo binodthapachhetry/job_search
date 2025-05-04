@@ -1,9 +1,9 @@
 job_search:
   description: |
     **Objective:** Find active job postings matching the query '{query}', scrape their details, and format them as JSON.
-    **Tools:** You have a 'DuckDuckGoSearchRun' tool and a 'SpiderTool' for scraping.
+    **Tools:** You have a 'SerperDevTool' tool and a 'SpiderTool' for scraping.
     **Process:**
-    1.  **Search:** Use the 'DuckDuckGoSearchRun' tool with the exact query '{query}' to get a list of potential URLs.
+    1.  **Search:** Use the 'SerperDevTool' tool with the exact query '{query}' to get a list of potential URLs.
     2.  **Initial Filter:** Review the search results (URLs, titles, snippets). Discard URLs that are clearly *not* job postings (e.g., news articles, general company pages, forum links). Prioritize URLs from known job boards (LinkedIn, Indeed, Glassdoor, company career pages).
     3.  **Scrape & Analyze (Per URL):** For each potentially valid job posting URL from step 2:
         a.  Use the 'SpiderTool' with the URL. Provide *only* the URL to the tool.
@@ -20,7 +20,7 @@ job_search:
             - `url`: The original URL that was successfully scraped.
         e.  **Missing Data:** If a field (other than salary) cannot be found in the scraped text, use `null` or omit the field. Do *not* invent data.
     4.  **Compile Results:** Collect all successfully scraped and extracted job data objects into a JSON list.
-  expected_output: A valid JSON list where each object represents a successfully scraped, active job posting. Each object MUST contain the fields: `title`, `company`, `location`, `description`, `responsibilities`, `requirements`, `url`, and optionally `salary`. Field values must be derived *only* from the scraped page content. Ensure the output is a single, valid JSON list structure.
+  expected_output: A valid JSON list where each object represents a successfully scraped, active job posting. Each object MUST contain the fields `title, `company`, `location`, `description`, `responsibilities`, `requirements`, `url`, and optionally `salary`. Field values must be derived *only* from the scraped page content. Ensure the output is a single, valid JSON list structure.
 
 filter_jobs:
   description: |
@@ -49,7 +49,7 @@ job_rating:
         d.  **Augment Job Object:** Add the calculated `rating` (integer) and `rating_description` (string) fields to the *original* job object.
     3.  **Compile Results:** Collect all the augmented job objects into a new JSON list.
     **Constraint:** Ensure that ALL original fields and values from the input job objects are preserved in the output. Only the `rating` and `rating_description` fields should be added. Do not modify other fields.
-  expected_output: A valid JSON list containing ALL job objects from the input context. Each job object MUST be augmented with two new fields: `rating` (integer 1-10) and `rating_description` (string). All other original fields and values must be unchanged.
+  expected_output: A valid JSON list containing ALL job objects from the input context. Each job object MUST be augmented with two new fields `rating` (integer 1-10) and `rating_description` (string). All other original fields and values must be unchanged.
 
 evaluate_company:
   description: |
@@ -66,7 +66,7 @@ evaluate_company:
         f.  **Augment Job Object:** Add the calculated `company_rating` (integer) and `company_rating_description` (string) to the *original* job object.
     2.  **Compile Results:** Collect all the augmented job objects into a new JSON list.
     **Constraint:** Ensure that ALL original fields and values from the input job objects (including the job `rating` and `rating_description` added in the previous step) are preserved. Only the `company_rating` and `company_rating_description` fields should be added in this step.
-  expected_output: A valid JSON list containing ALL job objects from the input context. Each job object MUST be augmented with two new fields: `company_rating` (integer 1-10) and `company_rating_description` (string). All other original fields and values must be unchanged. The final structure should align with the job objects within the provided {output_schema}.
+  expected_output: A valid JSON list containing ALL job objects from the input context. Each job object MUST be augmented with two new fields `company_rating` (integer 1-10) and `company_rating_description` (string). All other original fields and values must be unchanged. The final structure should align with the job objects within the provided {output_schema}.
 
 structure_results:
   description: |

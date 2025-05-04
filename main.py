@@ -43,15 +43,15 @@ class JobSearchCrew:
         job_search_expert_agent = agent_factory.create_agent(
             "job_search_expert", tools=[search_tool, scrape_tool], llm=llm # Use search and spider (scraping) tools
         )
-        job_filtering_expert_agent = agent_factory.create_agent(
-            "job_filtering_expert", tools=None, llm=llm # No tools needed, just context analysis
-        )
+        # job_filtering_expert_agent = agent_factory.create_agent(
+        #     "job_filtering_expert", tools=None, llm=llm # No tools needed, just context analysis
+        # )
         job_rating_expert_agent = agent_factory.create_agent(
             "job_rating_expert", tools=[resume_file_read_tool], llm=llm
         )
-        company_rating_expert_agent = agent_factory.create_agent(
-            "company_rating_expert", tools=[search_tool], llm=llm
-        )
+        # company_rating_expert_agent = agent_factory.create_agent(
+        #     "company_rating_expert", tools=[search_tool], llm=llm
+        # )
         summarization_expert_agent = agent_factory.create_agent(
             "summarization_expert", tools=None, llm=llm
         )
@@ -64,17 +64,17 @@ class JobSearchCrew:
         job_search_task = tasks_factory.create_task(
             "job_search", job_search_expert_agent, query=self.query
         )
-        filter_jobs_task = tasks_factory.create_task(
-            "filter_jobs", job_filtering_expert_agent, query=self.query # Pass query for relevance check
-        )
+        # filter_jobs_task = tasks_factory.create_task(
+        #     "filter_jobs", job_filtering_expert_agent, query=self.query # Pass query for relevance check
+        # )
         job_rating_task = tasks_factory.create_task(
             "job_rating", job_rating_expert_agent
         )
-        evaluate_company_task = tasks_factory.create_task(
-            "evaluate_company",
-            company_rating_expert_agent,
-            output_schema=response_schema,
-        )
+        # evaluate_company_task = tasks_factory.create_task(
+        #     "evaluate_company",
+        #     company_rating_expert_agent,
+        #     output_schema=response_schema,
+        # )
         structure_results_task = tasks_factory.create_task(
             "structure_results",
             summarization_expert_agent,
