@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Type, Union, Optional
 from urllib.parse import urlparse
 
 from crewai.tools import BaseTool
-from pydantic.v1 import BaseModel, Field # Use pydantic.v1 for BaseTool compatibility
+from pydantic import BaseModel, Field # Use standard Pydantic (v2) for schema compatibility
 
 # Define known patterns for search result pages (add more as needed)
 SEARCH_PAGE_PATTERNS = [
